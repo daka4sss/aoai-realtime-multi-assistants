@@ -38,6 +38,7 @@ See all tools set for each assistant to understand what each assistant can do, o
 1. You can interrupt the chat at any time by speaking and completely stop the chat by using the "Stop" button
 1. Optionally, you can use chat area to talk to the bot rather than speak to.
 1. Assitant name will be displayed in the assistant name text input whenever an assistant is loaded.
+1. To delete the specific message, enter the Id of the message to `Delete Item` which you can find in the chat history and click `Delete` that will strike sthough the idem.
 
 ## Known issues
 
