@@ -1,33 +1,52 @@
-# Project
+# Azure OpenAI /realtime: an interactive chat with multi-assistants
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repo contains a node sample application that uses AOAI Realtime Audio endpoint. See more detail about the SDK at [AOAI Realtime Audio SDK](https://github.com/Azure-Samples/aoai-realtime-audio-sdk)
 
-As the maintainer of this project, please make a few updates:
+This bot switches multiple assiants (system prompt + tools set) seamlessly depending on user needs.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Scenario
 
-## Contributing
+You can ask about mobile service, such as 
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+- Billing
+- Current plan
+- Options
+- Consulation on usage
+- Shop related question, etc.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+You can find the assistant definition at [assistants.ts](./src//assistants.ts).
+See all tools set for each assistant to understand what each assistant can do, or modify as you need.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+## Prereqs
 
-## Trademarks
+1. Node.js installation (https://nodejs.org)
+1. Azure Open AI account
+1. GPT-4o realtime model
+1. Bing Search Resource
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+## Using the sample
+
+1. Navigate to this folder
+1. Run `npm install` to download a small number of dependency packages (see `package.json`)
+1. Rename `.env_sample` to `.env` and update variables
+1. Run `npm run dev` to start the web server, navigating any firewall permissions prompts
+1. Use any of the provided URIs from the console output, e.g. `http://localhost:5173/`, in a browser
+1. If you want to debug the application, press F5 that will launch the browser for debug.
+1. Check `Chat Only` if you prefer to use text input only, otherwise you can use both Speech and text.
+1. Click the "Start" button to start the session; accept any microphone permissions dialog
+1. You should see a `<< Session Started >>` message in the left-side output, after which you can speak to the app
+1. You can interrupt the chat at any time by speaking and completely stop the chat by using the "Stop" button
+1. Optionally, you can use chat area to talk to the bot rather than speak to.
+1. Assitant name will be displayed in the assistant name text input whenever an assistant is loaded.
+
+## Known issues
+
+1. Connection errors are not yet gracefully handled and looping error spew may be observed in script debug output. Please just refresh the web page if an error appears.
+1. Voice selection is not yet supported.
+1. More authentication mechanisms, including keyless support via Entra, will come in a future service update.
+
+## Code description
+
+This sample uses a custom client to simplify the usage of the realtime API. The client package is included  in this repo in the `rt-client-0.4.6.tgz` file.
+
+The primary file demonstrating `/realtime` use is [src/main.ts](./src/main.ts); the first few functions demonstrate connecting to `/realtime` using the client, sending an inference configuration message, and then processing the send/receive of messages on the connection.
