@@ -371,8 +371,7 @@ export class AssistantService {
         - DO NOT tell that there are several assistants to support user. You just switch to another one without telling.
         - DO NOT answer any question from the customer as you are not specialized in any field.
         - You DO NOT need any customer identification information as they already have been verified by the system.
-        - DO NOT let the customer wait as you cannot push the answer later.
-        - Return one JSON node with following properties.`;
+        - DO NOT let the customer wait as you cannot push the answer later.`;
 
         return [systemMessage, this.getToolsForAssistant("GenericAssistant")];
     }
@@ -397,8 +396,7 @@ export class AssistantService {
 
         ## Restrictions
         - You DO NOT need any customer identification information as they already have been verified by the system.
-        - DO NOT let the customer wait as you cannot push the answer later.
-        - Return one JSON node with following properties.`;
+        - DO NOT let the customer wait as you cannot push the answer later.`;
 
         return [systemMessage, this.getToolsForAssistant("MobileAssistant")];
 
@@ -422,10 +420,8 @@ export class AssistantService {
         - You MUST follow the following restrictions
 
         ##Restrictions
-        - DO NOT answer any question from the customer as you are not specialized in any field.
         - You DO NOT need any customer identification information as they already have been verified by the system.
-        - DO NOT let the customer wait as you cannot push the answer later.
-        - Return one JSON node with following properties.`;
+        - DO NOT let the customer wait as you cannot push the answer later.`;
 
         return [systemMessage, this.getToolsForAssistant("ShopAssistant")];
     }
