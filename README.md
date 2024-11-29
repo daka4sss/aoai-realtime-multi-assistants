@@ -2,19 +2,20 @@
 
 This repo contains a node sample application that uses AOAI Realtime Audio endpoint. See more detail about the SDK at [AOAI Realtime Audio SDK](https://github.com/Azure-Samples/aoai-realtime-audio-sdk)
 
-This bot switches multiple assiants (system prompt + tools set) seamlessly depending on user needs.
+This sample switches multiple assistants (system prompt + tools set) seamlessly depending on your intent.
 
 ## Scenario
 
 You can ask about mobile service, such as 
 
-- Billing
-- Current plan
-- Options
+- Weather
+- Mobile phone billing
+- Mobile phoen current plan
+- Mobile phone options
 - Consulation on usage
-- Shop related question, etc.
+- Mobile phoe store related question, etc.
 
-You can find the assistant definition at [assistants.ts](./src//assistants.ts).
+You can find the assistant definitions at [assistants.ts](./src//assistants.ts).
 See all tools set for each assistant to understand what each assistant can do, or modify as you need.
 
 ## Prereqs
@@ -48,6 +49,56 @@ See all tools set for each assistant to understand what each assistant can do, o
 
 ## Code description
 
-This sample uses a custom client to simplify the usage of the realtime API. The client package is included  in this repo in the `rt-client-0.4.6.tgz` file.
+This sample uses a custom client to simplify the usage of the realtime API. The client package is included  in this repo in the `rt-client-0.4.7.tgz` file. Check the  [AOAI Realtime Audio SDK](https://github.com/Azure-Samples/aoai-realtime-audio-sdk) to see if there is a newer version of the package if you need the latest version of the SDK.
 
 The primary file demonstrating `/realtime` use is [src/main.ts](./src/main.ts); the first few functions demonstrate connecting to `/realtime` using the client, sending an inference configuration message, and then processing the send/receive of messages on the connection.
+
+## Assistants
+
+In this repo, we define an assistant as:
+
+- has system prompt
+- has tools (function calling definitions)
+
+We use `function calling` feature to switch to other assistant. 
+
+For example, the generic assistant has following function calling definition.
+
+```typescript
+{
+    name: 'Assistant_MobileAssistant',
+    description: 'Help user to answer mobile related question, such as billing, contract, etc.',
+    parameters: {
+        type: 'object',
+        properties: {}
+    },
+    returns: async (arg: string) => "Assistant_MobileAssistant"
+}
+```
+
+This function will be called whenever you asked about mobile phone related question. When we excute the function, instead of returns the function calling result back to the LLM, we send:
+
+1. `SessionUpdateMessage` to switch the assistant.
+1. `response.create` to let the model to continue the message.
+
+### Function Calling 
+
+To simplify the demo, we define the function calling metadata and the function defintion into one object. The `returns` property contains the anonymous function that returns the function calling result.
+
+The below example is the `get weather` function, that always returns the weather as `40F and rainy` with the `location` name.
+
+```typescript
+{
+    name: 'get_weather',
+    description: 'get the weather of the locaion',
+    parameters: {
+        type: 'object',
+        properties: {
+            location: { type: 'string', description: 'location for the weather' }
+        }
+    },
+    returns: async (arg: string) => `the weather of ${JSON.parse(arg).location} is 40F and rainy`
+}
+```
+
+

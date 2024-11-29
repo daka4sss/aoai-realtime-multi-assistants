@@ -306,6 +306,7 @@ export class AssistantService {
             };
             let assistant: [systemMessage: string, tools: any[]] = this.createMobileAssistantConfigMessage();
             configMessage.session.instructions = assistant[0];
+            configMessage.session.temperature = 0.6;
             configMessage.session.tools = assistant[1];
             return configMessage;
         } else if (content == "Assistant_ShopAssistant") {
@@ -320,6 +321,7 @@ export class AssistantService {
             };
             let assistant: [systemMessage: string, tools: any[]] = this.createShopAssistantConfigMessage();
             configMessage.session.instructions = assistant[0];
+            configMessage.session.temperature = 0.6;
             configMessage.session.tools = assistant[1];
             return configMessage;
         } else if (content == "Assistant_GenericAssistant") {
@@ -334,6 +336,7 @@ export class AssistantService {
             };
             let assistant: [systemMessage: string, tools: any[]] = this.createGenericAssistantConfigMessage();
             configMessage.session.instructions = assistant[0];
+            configMessage.session.temperature = 0.6;
             configMessage.session.tools = assistant[1];
             return configMessage;
         }
@@ -399,7 +402,6 @@ export class AssistantService {
         - DO NOT let the customer wait as you cannot push the answer later.`;
 
         return [systemMessage, this.getToolsForAssistant("MobileAssistant")];
-
     }
 
     public createShopAssistantConfigMessage(): [systemMessage: string, tools: object[]] {
