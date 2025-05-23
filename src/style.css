@@ -1,6 +1,23 @@
+/* シンプルな配色に整理 */
+:root {
+  --main-bg: #f7f7f7;
+  --main-text: #333;
+  --bubble-user: #e3f0fc;
+  --bubble-assistant: #e6f6ea;
+  --bubble-user-text: #2176ae;
+  --bubble-assistant-text: #2d7a46;
+  --primary: #5b9cf6;
+  --accent: #ff7675;
+  --border: #e0e0e0;
+  --sub-text: #888;
+  --hover: #fff9e3;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background: var(--main-bg);
+  color: var(--main-text);
 }
 
 .container {
@@ -13,10 +30,12 @@ body {
   flex: 6;
   overflow-y: auto;
   padding: 1rem;
-  background-color: #ebebeb;
-  border: 1px solid #646cff;
+  background: #fff;
+  border: 1px solid var(--border);
   border-radius: 8px;
   margin-right: 2rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .controls {
@@ -25,6 +44,10 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
+  background: #f3f6fa; /* シンプルな淡いブルーグレー */
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
 }
 
 .input-group {
@@ -37,19 +60,19 @@ body {
 .input-group input,
 .input-group textarea {
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #ebebeb;
+  background-color: #fff;
   margin-bottom: 0.5rem;
   transition: border-color 0.25s;
 }
 
 .input-group input:hover,
 .input-group textarea:hover {
-  border-color: #646cff;
+  border-color: var(--primary);
 }
 
 .input-group input:focus,
@@ -57,22 +80,19 @@ body {
 .input-group input:focus-visible,
 .input-group textarea:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+  border-color: var(--accent);
+}
+
+.input-group label {
+  color: var(--main-text);
+  font-weight: bold;
+  margin-bottom: 0.2rem;
 }
 
 .button-group {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
-}
-
-.toggle-group {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.toggle-group label {
-  margin-right: 0.5rem;
 }
 
 button {
@@ -82,14 +102,15 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #444df5;
-  color: white;
+  background-color: var(--primary);
+  color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
 }
 
 button:hover {
-  border-color: #646cff;
+  background-color: var(--accent);
+  border-color: var(--accent);
 }
 
 button:focus,
@@ -99,9 +120,77 @@ button:focus-visible {
 
 button:disabled,
 button[disabled] {
-  border: 1px solid #999999;
   background-color: #cccccc;
   color: #666666;
+}
+
+.selected-assistant {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--hover);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-weight: bold;
+  color: var(--sub-text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+#assistant-select {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  background: #fff;
+  margin-bottom: 0.5rem;
+}
+
+/* バブルチャット */
+.chat-bubble {
+  max-width: 70%;
+  padding: 0.8em 1.2em;
+  margin: 0.5em 0;
+  border-radius: 18px;
+  font-size: 1.05em;
+  line-height: 1.5;
+  word-break: break-word;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.chat-bubble.user {
+  background: var(--bubble-user);
+  color: var(--bubble-user-text);
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.user::after {
+  content: "";
+  position: absolute;
+  right: -12px;
+  top: 18px;
+  border-width: 8px 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent transparent var(--bubble-user);
+}
+
+.chat-bubble.assistant {
+  background: var(--bubble-assistant);
+  color: var(--bubble-assistant-text);
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.assistant::after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 18px;
+  border-width: 8px 12px 8px 0;
+  border-style: solid;
+  border-color: transparent var(--bubble-assistant) transparent transparent;
 }
 
 .strike { 

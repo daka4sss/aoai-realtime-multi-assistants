@@ -16,45 +16,45 @@
         <div class="controls">
          
           <div class="input-group">
-            <label for="temperature">Preferred Language</label>
-            <input id="language" type="text" value="English" placeholder="Enter language, such as English, Japanese, etc."/>
+            <label for="language">希望言語</label>
+            <input id="language" type="text" value="日本語" placeholder="言語を入力（例：日本語、英語など）"/>
           </div>
           <div class="input-group">
-            <label for="assistant">Loaded Assistant</label>
-            <input id="assistant" type="text" readonly="true" placeholder="An assistant name will be displayed once loaded."></textarea>
+            <label for="assistant">アシスタント選択</label>
+            <input id="assistant" type="text" readonly="true" placeholder="アシスタント名がここに表示されます。" />
           </div>
           <div class="input-group">
-            <label for="temperature">Temperature</label>
+            <label for="temperature">温度（Temperature）</label>
             <input id="temperature" type="number" min="0.6" max="1.2" step="0.05" placeholder="0.8 (0.6-1.2)" value="0.8"/>
           </div>
           <div class="input-group">
-            <label for="voice">Voice</label-for>
+            <label for="voice">音声</label>
             <select id="voice">
               <option selected>alloy</option>
               <option>echo</option>
               <option>shimmer</option>
             </select>
-            <label for="chat-only">Chat Only</label>
+            <label for="chat-only">チャットのみ</label>
             <input id="chat-only" type="checkbox" />
-            <label for="azure-toggle">Use Azure OpenAI</label>
+            <label for="azure-toggle">Azure OpenAIを使用</label>
             <input id="azure-toggle" type="checkbox" checked />
           </div>
           <div class="button-group">
-            <button id="start-recording" type="button">Start</button>
-            <button id="stop-recording" type="button" disabled="true">Stop</button>
+            <button id="start-recording" type="button">開始</button>
+            <button id="stop-recording" type="button" disabled="true">停止</button>
           </div>
          
           <div class="input-group">
-            <label for="chat">Chat</label>
-            <textarea id="chat" type="text" placeholder="Enter message" rows="4" disabled=true></textarea>
+            <label for="chat">チャット</label>
+            <textarea id="chat" type="text" placeholder="メッセージを入力" rows="4" disabled=true></textarea>
             <div class="button-group">
-            <button id="send-text" type="button" disabled="true">Send</button>
+            <button id="send-text" type="button" disabled="true">送信</button>
           </div>
           <div class="input-group">
-            <label for="delete-item-id">Delete Item</label>
-            <input id="delete-item-id" type="text" placeholder="Enter Id"/>
+            <label for="delete-item-id">削除アイテムID</label>
+            <input id="delete-item-id" type="text" placeholder="IDを入力"/>
             <div class="button-group">
-              <button id="delete-item" type="button" disabled="true">Delete</button>
+              <button id="delete-item" type="button" disabled="true">削除</button>
             </div>
           </div>
         </div>

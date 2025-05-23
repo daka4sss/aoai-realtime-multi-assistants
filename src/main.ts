@@ -51,23 +51,16 @@ async function start_realtime(endpoint: string, apiKey: string, deploymentOrMode
 let assistantMessage: string = "";
 async function handleRealtimeMessages() {
   for await (const message of realtimeStreaming.messages()) {
-    //console.log(message.type);
-
     switch (message.type) {
       case "session.created":
-        console.log(JSON.stringify(message, null, 2));
         setFormInputState(InputState.ReadyToStop);
-        makeNewTextBlock("<< Session Started >>");
-        makeNewTextBlock();
+        makeNewTextBlock("<< セッション開始 >>", "system");
         break;
       case "conversation.item.created":
-        if (message.item.type == "message" && message.item.role == "user" && message.item.content[0].type == "input_text") {
-          appendMessageId(message.item.id!);
-        }
+        // itemは画面に表示しない
         break;
       case "response.content_part.added":
-        makeNewTextBlock();
-        appendToTextBlock("Assisatnt: ");
+        makeNewTextBlock("", "assistant");
         break;
       case "response.audio_transcript.delta":
         appendToTextBlock(message.delta);
@@ -80,50 +73,41 @@ async function handleRealtimeMessages() {
         audioPlayer.play(pcmData);
         break;
       case "input_audio_buffer.speech_started":
-        makeNewTextBlock("");
-        let textElements = formReceivedTextContainer.children;
+        makeNewTextBlock("", "user");
+        let textElements = formReceivedTextContainer.querySelectorAll('.chat-bubble.user');
         latestInputSpeechBlock = textElements[textElements.length - 1];
-        makeNewTextBlock();
         audioPlayer.clear();
         break;
       case "conversation.item.input_audio_transcription.completed":
-        latestInputSpeechBlock.textContent += 
-        `User (Speech): ${message.transcript.replace(/[\n\r]+/g, '')} >> ${message.item_id!}`;
-        latestInputSpeechBlock.id = message.item_id!;
+        if (latestInputSpeechBlock) {
+          latestInputSpeechBlock.textContent += `User: ${message.transcript.replace(/\n|\r/g, '')}`;
+        }
         break;
       case "response.done":
         message.response.output.forEach(async (output: ResponseItem) => {
           if (output.type == 'function_call') {
-            console.log(JSON.stringify(output, null, 2));
             let response = await assistantService.getToolResponse(output.name, output.arguments, output.call_id);
-            console.log(JSON.stringify(response, null, 2));
             if (response.type == 'session.update') {
               response.session.voice = getVoice();
               response.session.temperature = getTemperature();
               formAssistantField.value = output.name;
             }
-            realtimeStreaming.send(
-              response
-            );
-            realtimeStreaming.send(
-              {
-                type: 'response.create'
-              });
+            realtimeStreaming.send(response);
+            realtimeStreaming.send({ type: 'response.create' });
           }
           else if (output.type == 'message') {
-            appendMessageId(output.id!);
-            console.log(assistantMessage);
-            assistantMessage = "";
-            formReceivedTextContainer.appendChild(document.createElement("hr"));
+            // Assistantの返答をバブルで表示（text型のみ抽出）
+            const textPart = output.content.find(part => part.type === 'text');
+            makeNewTextBlock(textPart ? (textPart as any).text : "", "assistant");
           }
         });
-
         break;
       case "error":
-        console.log(JSON.stringify(message, null, 2));
+        // エラーはsystemとして表示
+        makeNewTextBlock("[エラー] " + JSON.stringify(message), "system");
         break;
       default:
-        break
+        break;
     }
   }
   resetAudio(false);
@@ -223,10 +207,22 @@ function getVoice(): "alloy" | "echo" | "shimmer" {
   return formVoiceSelection.value as "alloy" | "echo" | "shimmer";
 }
 
-function makeNewTextBlock(text: string = "") {
-  let newElement = document.createElement("p");
-  newElement.textContent = text;
-  formReceivedTextContainer.appendChild(newElement);
+function makeNewTextBlock(text: string = "", role: "user"|"assistant"|"system" = "assistant") {
+  // 吹き出しバブル形式で追加
+  if (role === "system") return; // itemやsystemメッセージは表示しない
+  const bubble = document.createElement("div");
+  bubble.className = `chat-bubble ${role}`;
+  bubble.textContent = text;
+  formReceivedTextContainer.appendChild(bubble);
+}
+
+function appendToTextBlock(text: string) {
+  // 最後のバブルに追記
+  const textElements = formReceivedTextContainer.querySelectorAll('.chat-bubble');
+  if (textElements.length === 0) {
+    makeNewTextBlock("", "assistant");
+  }
+  textElements[textElements.length - 1].textContent += text;
 }
 
 function appendMessageId(id: string) {
@@ -238,14 +234,6 @@ function appendMessageId(id: string) {
 function markTextAsDeleted(id: string) {
   let textElements = document.getElementById(id);
   textElements?.classList.add("strike");
-}
-
-function appendToTextBlock(text: string) {
-  let textElements = formReceivedTextContainer.children;
-  if (textElements.length == 0) {
-    makeNewTextBlock();
-  }
-  textElements[textElements.length - 1].textContent += text;
 }
 
 formStartButton.addEventListener("click", async () => {
@@ -268,52 +256,34 @@ formStopButton.addEventListener("click", async () => {
 
 sendTextButton.addEventListener('click', async () => {
   let input = chatField.value.trim();
-  realtimeStreaming.send(
-    {
-      type: 'conversation.item.create',
-      item: {
-        type: 'message',
-        role: 'user',
-        content: [{
-          type: 'input_text',
-          text: input
-        }]
-      }
+  realtimeStreaming.send({
+    type: 'conversation.item.create',
+    item: {
+      type: 'message',
+      role: 'user',
+      content: [{ type: 'input_text', text: input }]
     }
-  );
+  });
   audioPlayer.clear();
-  appendToTextBlock(`User: ${input}`);
+  makeNewTextBlock(input, "user");
   chatField.value = '';
 });
 
 chatField.addEventListener('keypress', async (e) => {
-  if (e.key !== 'Enter') {
-    return;
-  }
-
+  if (e.key !== 'Enter') return;
   e.preventDefault();
-
   let input = chatField.value.trim();
-  realtimeStreaming.send(
-    {
-      type: 'conversation.item.create',
-      item: {
-        type: 'message',
-        role: 'user',
-        content: [{
-          type: 'input_text',
-          text: input
-        }]
-      }
+  realtimeStreaming.send({
+    type: 'conversation.item.create',
+    item: {
+      type: 'message',
+      role: 'user',
+      content: [{ type: 'input_text', text: input }]
     }
-  );
-  realtimeStreaming.send(
-    {
-      type: 'response.create'
-    }
-  );
+  });
+  realtimeStreaming.send({ type: 'response.create' });
   audioPlayer.clear();
-  appendToTextBlock(`User: ${input}`);
+  makeNewTextBlock(input, "user");
   chatField.value = '';
 });
 
