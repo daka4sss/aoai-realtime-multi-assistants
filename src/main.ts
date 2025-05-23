@@ -208,12 +208,34 @@ function getVoice(): "alloy" | "echo" | "shimmer" {
 }
 
 function makeNewTextBlock(text: string = "", role: "user"|"assistant"|"system" = "assistant") {
-  // 吹き出しバブル形式で追加
-  if (role === "system") return; // itemやsystemメッセージは表示しない
+  if (role === "system") return;
+  const wrapper = document.createElement("div");
+  wrapper.className = `chat-row ${role}`;
+
+  // アイコン
+  const icon = document.createElement("span");
+  icon.className = "icon-large";
+  icon.textContent = role === "user" ? "😊" : "🤖";
+
+  // バブル
   const bubble = document.createElement("div");
   bubble.className = `chat-bubble ${role}`;
-  bubble.textContent = text;
-  formReceivedTextContainer.appendChild(bubble);
+  const span = document.createElement("span");
+  span.textContent = text;
+  bubble.appendChild(span);
+
+  if (role === "user") {
+    // ユーザー: 右寄せ、バブル→アイコンの順
+    wrapper.appendChild(bubble);
+    wrapper.appendChild(icon);
+    wrapper.style.justifyContent = "flex-end";
+  } else {
+    // アシスタント: 左寄せ、アイコン→バブルの順
+    wrapper.appendChild(icon);
+    wrapper.appendChild(bubble);
+    wrapper.style.justifyContent = "flex-start";
+  }
+  formReceivedTextContainer.appendChild(wrapper);
 }
 
 function appendToTextBlock(text: string) {

@@ -146,9 +146,10 @@ button[disabled] {
 
 /* バブルチャット */
 .chat-bubble {
+  display: flex;
+  align-items: center;
   max-width: 70%;
   padding: 0.8em 1.2em;
-  margin: 0.5em 0;
   border-radius: 18px;
   font-size: 1.05em;
   line-height: 1.5;
@@ -157,22 +158,24 @@ button[disabled] {
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
+.chat-bubble .icon {
+  font-size: 1.5em;
+  margin: 0 0.5em;
+  vertical-align: middle;
+}
+
 .chat-bubble.user {
   background: var(--bubble-user);
   color: var(--bubble-user-text);
   align-self: flex-end;
   margin-left: auto;
   border-bottom-right-radius: 4px;
+  flex-direction: row-reverse;
 }
 
-.chat-bubble.user::after {
-  content: "";
-  position: absolute;
-  right: -12px;
-  top: 18px;
-  border-width: 8px 0 8px 12px;
-  border-style: solid;
-  border-color: transparent transparent transparent var(--bubble-user);
+.chat-bubble.user .icon {
+  margin-left: 0.5em;
+  margin-right: 0;
 }
 
 .chat-bubble.assistant {
@@ -181,18 +184,64 @@ button[disabled] {
   align-self: flex-start;
   margin-right: auto;
   border-bottom-left-radius: 4px;
+  flex-direction: row;
 }
 
+.chat-bubble.assistant .icon {
+  margin-right: 0.5em;
+  margin-left: 0;
+}
+
+.chat-row {
+  display: flex;
+  align-items: flex-end;
+  margin: 0.5em 0;
+}
+.chat-row.user {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.chat-row.assistant {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.icon-large {
+  font-size: 2.2em;
+  margin: 0 0.2em;
+  line-height: 1;
+  -webkit-user-select: none;
+  user-select: none;
+  /* 吹き出し感を強調 */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+}
+
+/* バブルとアイコンの間隔を調整 */
+.chat-row.user .chat-bubble {
+  margin-right: 0.2em;
+  margin-left: 0;
+}
+.chat-row.user .icon-large {
+  margin-left: 0.2em;
+  margin-right: 0;
+}
+.chat-row.assistant .chat-bubble {
+  margin-left: 0.2em;
+  margin-right: 0;
+}
+.chat-row.assistant .icon-large {
+  margin-right: 0.2em;
+  margin-left: 0;
+}
+
+/* バブルの矢印をアイコン側に寄せる */
+.chat-bubble.user::after {
+  right: -12px;
+  left: auto;
+}
 .chat-bubble.assistant::after {
-  content: "";
-  position: absolute;
   left: -12px;
-  top: 18px;
-  border-width: 8px 12px 8px 0;
-  border-style: solid;
-  border-color: transparent var(--bubble-assistant) transparent transparent;
+  right: auto;
 }
-
 .strike { 
   text-decoration: line-through; 
 }
